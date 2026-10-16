@@ -71,8 +71,8 @@ def build_dataset(args) -> pd.DataFrame:
     df = df[~df[config.TEXT_COL].isin(conflicts[conflicts > 1].index)]
 
     if args.max_per_class:
-        df = (df.groupby(config.TEXT_LABEL_COL, group_keys=False)
-                .apply(lambda g: g.sample(min(len(g), args.max_per_class), random_state=config.RANDOM_STATE)))
+      df = pd.concat([g.sample(min(len(g), args.max_per_class), random_state=config.RANDOM_STATE)
+                        for _, g in df.groupby(config.TEXT_LABEL_COL)])
     df = df.sample(frac=1, random_state=config.RANDOM_STATE).reset_index(drop=True)
 
     if args.add_timestamps:  # условное время — только для демонстрации фильтров панели
